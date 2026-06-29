@@ -1,0 +1,385 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Waseem Bari — Weekly LO Report</title>
+<style>
+  :root {
+    --blue:   #1a56db;
+    --navy:   #1e3a5f;
+    --teal:   #0694a2;
+    --green:  #057a55;
+    --amber:  #b45309;
+    --red:    #c81e1e;
+    --gray:   #6b7280;
+    --light:  #f3f4f6;
+    --border: #e5e7eb;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+         background: #f9fafb; color: #111827; font-size: 14px; }
+
+  /* ── Header ── */
+  .header { background: var(--navy); color: #fff; padding: 24px 32px; display: flex;
+             justify-content: space-between; align-items: flex-end; }
+  .header h1 { font-size: 22px; font-weight: 700; letter-spacing: -.3px; }
+  .header .meta { font-size: 12px; opacity: .75; text-align: right; line-height: 1.6; }
+
+  /* ── Layout ── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+  .row { display: grid; gap: 16px; margin-bottom: 16px; }
+  .row-3 { grid-template-columns: repeat(3, 1fr); }
+  .row-4 { grid-template-columns: repeat(4, 1fr); }
+  .row-2 { grid-template-columns: 1fr 1fr; }
+  .row-1 { grid-template-columns: 1fr; }
+
+  /* ── Card ── */
+  .card { background: #fff; border: 1px solid var(--border); border-radius: 10px;
+          padding: 20px; }
+  .card-title { font-size: 11px; font-weight: 600; text-transform: uppercase;
+                letter-spacing: .6px; color: var(--gray); margin-bottom: 4px; }
+
+  /* ── KPI tiles ── */
+  .kpi { text-align: center; }
+  .kpi .value { font-size: 42px; font-weight: 700; line-height: 1.1; }
+  .kpi .label { font-size: 12px; color: var(--gray); margin-top: 4px; }
+  .kpi.blue  .value { color: var(--blue);  }
+  .kpi.teal  .value { color: var(--teal);  }
+  .kpi.green .value { color: var(--green); }
+  .kpi.amber .value { color: var(--amber); }
+  .kpi.red   .value { color: var(--red);   }
+  .kpi.navy  .value { color: var(--navy);  }
+
+  /* ── Activity bar ── */
+  .act-row { display: flex; justify-content: space-between; align-items: center;
+             padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .act-row:last-child { border-bottom: none; }
+  .act-row .act-label { font-size: 13px; color: #374151; }
+  .act-row .act-bar-wrap { flex: 1; margin: 0 12px; height: 8px; background: var(--light);
+                           border-radius: 4px; overflow: hidden; }
+  .act-row .act-bar { height: 100%; border-radius: 4px; background: var(--blue); }
+  .act-row .act-count { font-size: 13px; font-weight: 600; min-width: 28px; text-align: right; }
+
+  /* ── Funnel ── */
+  .funnel-wrap { display: flex; flex-direction: column; gap: 6px; }
+  .funnel-step { display: flex; align-items: center; gap: 10px; }
+  .funnel-bar-bg { flex: 1; height: 28px; background: var(--light); border-radius: 4px;
+                   overflow: hidden; position: relative; }
+  .funnel-bar { height: 100%; border-radius: 4px; display: flex; align-items: center;
+                padding-left: 10px; font-size: 12px; font-weight: 600; color: #fff;
+                white-space: nowrap; transition: width .5s ease; }
+  .funnel-label { font-size: 12px; color: var(--gray); min-width: 100px; text-align: right; }
+  .funnel-count { font-size: 13px; font-weight: 700; min-width: 24px; text-align: right; }
+
+  /* ── Loan table ── */
+  table { width: 100%; border-collapse: collapse; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--gray);
+       padding: 8px 10px; border-bottom: 2px solid var(--border); text-align: left;
+       font-weight: 600; }
+  td { padding: 10px 10px; border-bottom: 1px solid var(--border); font-size: 13px;
+       vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f9fafb; }
+
+  /* ── Badges ── */
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px;
+           font-weight: 600; white-space: nowrap; }
+  .badge-intake   { background: #dbeafe; color: #1e40af; }
+  .badge-pre      { background: #d1fae5; color: #065f46; }
+  .badge-cond     { background: #fef3c7; color: #92400e; }
+  .badge-funded   { background: #ecfdf5; color: #047857; }
+  .badge-adverse  { background: #fee2e2; color: #991b1b; }
+  .badge-other    { background: #f3f4f6; color: #374151; }
+
+  /* ── Recon ── */
+  .recon { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px;
+           padding: 14px 18px; font-size: 13px; color: #92400e; line-height: 1.6; }
+  .recon.ok { background: #ecfdf5; border-color: #6ee7b7; color: #065f46; }
+
+  /* ── Footer ── */
+  .footer { text-align: center; padding: 24px; font-size: 11px; color: #9ca3af; }
+
+  @media (max-width: 700px) {
+    .row-3, .row-4, .row-2 { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 480px) {
+    .row-3, .row-4, .row-2 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════
+     REPORT DATA — routine rewrites ONLY this object each week.
+     All rendering below auto-computes from these values.
+     ════════════════════════════════════════════════════════════════ -->
+<script>
+const reportData = {
+  // Reporting window
+  weekStart:   "2026-06-22",   // Monday
+  weekEnd:     "2026-06-28",   // Sunday
+  generated:   "2026-06-29",   // run date
+
+  // Step 1 — Close CRM activity counts
+  activity: {
+    newLeads:    13,
+    calls:       20,
+    tasks:       63,
+    sms:         334,
+    meetings:    2,
+    totalLogged: 1140
+  },
+
+  // Step 2 — ARIVE LOS loans (one object per row)
+  // statusType: "intake" | "pre" | "cond" | "funded" | "adverse" | "other"
+  applications: [
+    { borrower: "Cristian Doing",    statusType: "pre",     purpose: "Purchase", amount: 291000 },
+    { borrower: "Clayton Doing",     statusType: "pre",     purpose: "Purchase", amount: 424600 },
+    { borrower: "Samantha Zamora",   statusType: "intake",  purpose: "Purchase", amount: 193000 },
+    { borrower: "Abel Moreno Perez", statusType: "intake",  purpose: "Purchase", amount: 288535 },
+    { borrower: "Johnny Morales",    statusType: "intake",  purpose: "Purchase", amount: 2090000 },
+    { borrower: "Justin Saenz",      statusType: "pre",     purpose: "Purchase", amount: 183302 },
+    { borrower: "Jolyn Ward",        statusType: "adverse", purpose: "Purchase", amount: 278885 }
+  ],
+
+  // Step 3 — Reconciliation
+  reconciliationNote: "Close CRM shows 13 new lead events this week vs 7 ARIVE loan files — the 6-lead gap reflects contacts still in early discovery/outreach that have not yet converted to formal loan applications in ARIVE (expected pipeline lag, no attribution issue). Cross-check of Close opportunities (7) to ARIVE loan files (7) confirms the two systems are fully aligned on converted pipeline."
+};
+</script>
+<!-- ════════════════════════════════════════════════════════════════ -->
+
+
+<!-- ── DO NOT edit below — rendering code only ── -->
+<script>
+// Derived values (computed from reportData, never manually set)
+const R = reportData;
+
+function fmt$  (n) { return n == null ? "—" : "$" + Number(n).toLocaleString(); }
+function fmtN  (n) { return n == null ? "—" : Number(n).toLocaleString(); }
+function fmtDt (s) {
+  const d = new Date(s + "T12:00:00Z");
+  return d.toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"});
+}
+
+// Status totals
+const statusCounts = {};
+(R.applications || []).forEach(a => {
+  statusCounts[a.statusType] = (statusCounts[a.statusType] || 0) + 1;
+});
+const totalApps = (R.applications || []).length;
+
+// Funnel steps (ordered)
+const FUNNEL = [
+  { key:"intake",  label:"Application / Intake",  color:"#1a56db" },
+  { key:"pre",     label:"Pre-Approved",           color:"#0694a2" },
+  { key:"cond",    label:"Approved w/ Conditions", color:"#d97706" },
+  { key:"funded",  label:"Funded",                 color:"#057a55" },
+  { key:"adverse", label:"Adverse Action",         color:"#c81e1e" },
+  { key:"other",   label:"Other",                  color:"#6b7280" },
+];
+
+const actMax = Math.max(
+  R.activity.calls, R.activity.sms, R.activity.tasks,
+  R.activity.meetings, R.activity.newLeads, 1
+);
+
+const BADGE = {
+  intake:  "Application / Intake",
+  pre:     "Pre-Approved",
+  cond:    "Cond. Approval",
+  funded:  "Funded",
+  adverse: "Adverse",
+  other:   "Other",
+};
+</script>
+
+<div class="header">
+  <div>
+    <div style="font-size:11px;opacity:.6;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">
+      JetMo Mortgage — Bari JetMo LLC
+    </div>
+    <h1>Weekly LO Report — Waseem Bari</h1>
+  </div>
+  <div class="meta" id="hdr-meta"></div>
+</div>
+<script>
+document.getElementById("hdr-meta").innerHTML =
+  `<span>Week of ${fmtDt(R.weekStart)} – ${fmtDt(R.weekEnd)}</span><br>` +
+  `<span>Generated ${fmtDt(R.generated)}</span>`;
+</script>
+
+<div class="container">
+
+  <!-- ── Headline KPIs ── -->
+  <div class="row row-4" style="margin-bottom:16px">
+    <div class="card kpi blue">
+      <div class="card-title">New Leads</div>
+      <div class="value" id="kpi-leads"></div>
+      <div class="label">Close CRM</div>
+    </div>
+    <div class="card kpi teal">
+      <div class="card-title">Total Calls</div>
+      <div class="value" id="kpi-calls"></div>
+      <div class="label">Close CRM</div>
+    </div>
+    <div class="card kpi green">
+      <div class="card-title">Loan Files</div>
+      <div class="value" id="kpi-apps"></div>
+      <div class="label">ARIVE LOS</div>
+    </div>
+    <div class="card kpi navy">
+      <div class="card-title">Total Activity</div>
+      <div class="value" id="kpi-total"></div>
+      <div class="label">All logged</div>
+    </div>
+  </div>
+  <script>
+    document.getElementById("kpi-leads").textContent = fmtN(R.activity.newLeads);
+    document.getElementById("kpi-calls").textContent = fmtN(R.activity.calls);
+    document.getElementById("kpi-apps").textContent  = fmtN(totalApps);
+    document.getElementById("kpi-total").textContent = fmtN(R.activity.totalLogged);
+  </script>
+
+  <!-- ── Activity breakdown + Funnel ── -->
+  <div class="row row-2">
+
+    <!-- Activity bars -->
+    <div class="card">
+      <div class="card-title">Activity Breakdown — Close CRM</div>
+      <div id="act-bars" style="margin-top:14px"></div>
+    </div>
+    <script>
+    (function(){
+      const acts = [
+        { label:"Calls",        n: R.activity.calls    },
+        { label:"SMS",          n: R.activity.sms      },
+        { label:"Tasks Done",   n: R.activity.tasks    },
+        { label:"Meetings",     n: R.activity.meetings },
+        { label:"New Leads",    n: R.activity.newLeads },
+      ];
+      const el = document.getElementById("act-bars");
+      acts.forEach(a => {
+        const pct = actMax ? Math.round((a.n / actMax) * 100) : 0;
+        el.innerHTML += `
+          <div class="act-row">
+            <span class="act-label">${a.label}</span>
+            <div class="act-bar-wrap">
+              <div class="act-bar" style="width:${pct}%"></div>
+            </div>
+            <span class="act-count">${fmtN(a.n)}</span>
+          </div>`;
+      });
+    })();
+    </script>
+
+    <!-- Status funnel -->
+    <div class="card">
+      <div class="card-title">Loan Status Funnel — ARIVE LOS</div>
+      <div id="funnel" class="funnel-wrap" style="margin-top:14px"></div>
+    </div>
+    <script>
+    (function(){
+      const el = document.getElementById("funnel");
+      const max = Math.max(...FUNNEL.map(f => statusCounts[f.key] || 0), 1);
+      FUNNEL.forEach(f => {
+        const n = statusCounts[f.key] || 0;
+        const pct = Math.round((n / max) * 100);
+        el.innerHTML += `
+          <div class="funnel-step">
+            <span class="funnel-label">${f.label}</span>
+            <div class="funnel-bar-bg">
+              <div class="funnel-bar" style="width:${pct}%;background:${f.color}">
+                ${n > 0 ? "" : ""}
+              </div>
+            </div>
+            <span class="funnel-count">${fmtN(n)}</span>
+          </div>`;
+      });
+    })();
+    </script>
+
+  </div>
+
+  <!-- ── Loan Applications Table ── -->
+  <div class="row row-1">
+    <div class="card">
+      <div class="card-title">Loan Files — ARIVE LOS
+        <span id="app-count" style="font-size:11px;color:#6b7280;text-transform:none;margin-left:6px"></span>
+      </div>
+      <div style="margin-top:14px; overflow-x:auto">
+        <table id="app-table">
+          <thead>
+            <tr>
+              <th>Borrower</th>
+              <th>Status</th>
+              <th>Purpose</th>
+              <th style="text-align:right">Loan Amount</th>
+            </tr>
+          </thead>
+          <tbody id="app-body"></tbody>
+        </table>
+        <div id="app-empty" style="display:none;padding:20px;text-align:center;color:#9ca3af;font-size:13px">
+          No loan files in ARIVE for this window.
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+  (function(){
+    const apps = R.applications || [];
+    document.getElementById("app-count").textContent = `(${apps.length} file${apps.length !== 1 ? "s" : ""})`;
+    if (!apps.length) {
+      document.getElementById("app-table").style.display = "none";
+      document.getElementById("app-empty").style.display = "block";
+      return;
+    }
+    const tbody = document.getElementById("app-body");
+    apps.forEach(a => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${a.borrower || "—"}</td>
+          <td><span class="badge badge-${a.statusType || "other"}">${BADGE[a.statusType] || a.statusType || "—"}</span></td>
+          <td>${a.purpose || "—"}</td>
+          <td style="text-align:right;font-variant-numeric:tabular-nums">${fmt$(a.amount)}</td>
+        </tr>`;
+    });
+  })();
+  </script>
+
+  <!-- ── Reconciliation ── -->
+  <div class="row row-1">
+    <div id="recon-card" class="recon"></div>
+  </div>
+  <script>
+  (function(){
+    const el = document.getElementById("recon-card");
+    const closeLeads = R.activity.newLeads;
+    const ariveFiles = totalApps;
+    if (R.reconciliationNote) {
+      el.textContent = "⚠ Reconciliation note: " + R.reconciliationNote;
+    } else if (closeLeads === ariveFiles) {
+      el.classList.add("ok");
+      el.textContent = `✓ Systems agree: Close new leads (${closeLeads}) matches ARIVE loan files (${ariveFiles}).`;
+    } else {
+      el.textContent =
+        `⚠ Reconciliation gap: Close shows ${closeLeads} new lead${closeLeads !== 1 ? "s" : ""} ` +
+        `but ARIVE has ${ariveFiles} loan file${ariveFiles !== 1 ? "s" : ""} for this window. ` +
+        "Verify borrower attribution between the two systems.";
+    }
+  })();
+  </script>
+
+</div><!-- /container -->
+
+<div class="footer">
+  JetMo Mortgage · Bari JetMo LLC · Waseem Bari ·
+  <span id="footer-range"></span>
+</div>
+<script>
+document.getElementById("footer-range").textContent =
+  `Week ${fmtDt(R.weekStart)} – ${fmtDt(R.weekEnd)} · Generated ${fmtDt(R.generated)}`;
+</script>
+</body>
+</html>
